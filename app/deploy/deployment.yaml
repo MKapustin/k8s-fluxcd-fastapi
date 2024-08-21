@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: app
-        image: k8s-fluxcd-fastapi:0.0.1
+        image: k8s-fluxcd-fastapi:0.0.2
         ports:
         - containerPort: 8080
         volumeMounts:
