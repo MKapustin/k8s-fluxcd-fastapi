@@ -28,25 +28,29 @@ flux check --pre
 ```
 
 ### To build image and run App in container
-`docker build -t fastapi-fluxcd:0.0.0 .`
-`docker run -d --name fastapi-fluxcd-conainer -p 80:80 fastapi-fluxcd:0.0.0`
+```
+docker build -t fastapi-fluxcd:0.0.0 .
+docker run -d --name fastapi-fluxcd-conainer -p 8080:8080 fastapi-fluxcd:0.0.0
+```
 
 
 ### To run a local linux playground
-docker run -it --rm -v ${HOME}:/root/ -v ${PWD}:/work -w /work --net host alpine sh
+```docker run -it --rm -v ${HOME}:/root/ -v ${PWD}:/work -w /work --net host alpine sh```
 
 
 ### To run a local cluster and check it
+```
 kind create cluster --name fluxcd --image kindest/node:v1.30.4
 kubectl cluster-info
-
+```
 
 
 ### Flux bootstrap GitHub
+```bash
 flux bootstrap github \
   --token-auth \
   --owner=MKapustin \
-  --repository=fluxcd-k8s-fastapi \
+  --repository=k8s-fluxcd-fastapi \
   --path=infra-repo/clusters/dev-cluster \
   --personal \
   --branch main
@@ -56,3 +60,40 @@ flux check
 # flux manages itself using GitOps objects:
 kubectl -n flux-system get GitRepository
 kubectl -n flux-system get Kustomization
+```
+
+
+### GitOps structure
+                                                    
+```
+                                                    
+ developer    +-----------+     +----------+           
+              |           |     | CI       |           
+  ----------> | REPO(code)|---> | PIPELINE |           
+              +-----------+     +----------+           
+                                         |  commit     
+                                         v             
+           +----------+ sync    +----------+           
+           |  INFRA   |-------> |INFRA     |           
+           |  (k8s)   |         |REPO(yaml)|           
+           +----------+         +----------+           
+                                                            
+```                                          
+
+
+###
+```bash
+# go to our "git repo"
+cd kubernetes/fluxcd/repositories/example-app-1
+# check the files
+ls
+
+cd src
+docker build . -t example-app-1:0.0.1
+
+#load the image to our test cluster so we dont need to push to a registry
+kind load docker-image example-app-1:0.0.1 --name fluxcd 
+```
+
+
+###

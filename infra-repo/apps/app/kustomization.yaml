@@ -1,0 +1,12 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: app
+  namespace: default
+spec:
+  interval: 15m
+  path: "./app/deploy"
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: app
